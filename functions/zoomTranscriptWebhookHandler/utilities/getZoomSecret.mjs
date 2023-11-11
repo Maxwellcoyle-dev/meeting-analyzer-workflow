@@ -3,21 +3,20 @@ import {
   GetSecretValueCommand,
 } from "@aws-sdk/client-secrets-manager";
 
-const secret_name = "dev/zoom-webhook/api-key";
 const client = new SecretsManagerClient({
   region: "us-east-2",
 });
 
-export const getZoomSecret = async () => {
+export const getZoomSecret = async (secretName) => {
   try {
     const response = await client.send(
       new GetSecretValueCommand({
-        SecretId: secret_name,
+        SecretId: secretName,
       })
     );
 
-    const token = JSON.parse(response.SecretString).ZOOM_WEBHOOK_SECRET_TOKEN;
-    return token;
+    const key = JSON.parse(response.SecretString);
+    return key;
   } catch (err) {
     console.log(err);
     return err;
