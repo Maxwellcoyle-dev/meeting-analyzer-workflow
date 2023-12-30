@@ -1,28 +1,5 @@
 import axios from "axios";
 
-const clientId = "ZXZb4fV5R7yrXt0RWd1Ttw";
-const clientSecret = "32gsj5YEk8J3IYVDjV25NlpJ37yX78KX";
-
-// const getToken = async () => {
-//   const response = await axios.post(
-//     "https://zoom.us/oauth/token",
-//     {},
-//     {
-//       params: {
-//         grant_type: "client_credentials",
-//       },
-//       headers: {
-//         Authorization: `Basic ${Buffer.from(
-//           `${clientId}:${clientSecret}`
-//         ).toString("base64")}`,
-//       },
-//     }
-//   );
-
-//   console.log("getToken response", response);
-//   return response.data.access_token; // Use this token for authenticated requests
-// };
-
 export const downloadURL = async (files, downloadToken) => {
   console.log("files", files);
 

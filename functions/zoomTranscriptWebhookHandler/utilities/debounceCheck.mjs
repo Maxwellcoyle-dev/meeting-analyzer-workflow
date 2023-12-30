@@ -40,6 +40,7 @@ export const duplicateEventCheck = async (eventId) => {
       console.log("Duplicate event detected, ignoring");
       return true;
     }
+    console.log("New event detected, recording");
     await recordEvent(eventId);
     return false;
   } catch (err) {
