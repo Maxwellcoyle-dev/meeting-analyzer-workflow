@@ -11,19 +11,19 @@ Globals:
     Timeout: 120
 
 Resources:
-  ZoomTranscriptWebhookFunction:
+  automationAppHandlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: functions/zoomTranscriptWebhookHandler
+      CodeUri: functions/automation-app-handler
       Handler: index.handler
       Runtime: nodejs18.x
       Architectures:
         - x86_64
       Events:
-        ZoomTranscriptWebhookApi:
+        automationAppHandlerApi:
           Type: Api
           Properties:
-            Path: /zoom-transcript-webhook
+            Path: /automation-app-handler
             Method: post
       Environment: # Pass the DynamoDB table name as an environment variable
         Variables:
@@ -47,15 +47,15 @@ Resources:
         WriteCapacityUnits: 5
 
 Outputs:
-  ZoomTranscriptWebhookApi:
+  AutomationAppHandlerApi:
     Description: API Gateway endpoint URL for Prod stage for zoom webhook function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/zoom-transcript-webhook/"
-  ZoomWebhookHandlerFunction:
-    Description: Webhook Lambda Function ARN
-    Value: !GetAtt ZoomTranscriptWebhookFunction.Arn
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/automation-app-handler/"
+  AutomationAppHandlerFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt AutomationAppHandlerFunction.Arn
   HelloWorldFunctionIamRole:
-    Description: Implicit IAM Role created for web hook function
-    Value: !GetAtt ZoomTranscriptWebhookFunctionRole.Arn
+    Description: Implicit IAM Role created for lanbda handler function
+    Value: !GetAtt AutomationAppHandlerFunctionRole.Arn
   ZoomTranscriptEventDebounceTableArn:
     Description: ARN of the DynamoDB Table
     Value: !GetAtt ZoomTranscriptEventDebounceTable.Arn
