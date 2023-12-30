@@ -7,9 +7,9 @@ The Project contains a lambda function that reveives events through an api gatew
 functions/zoomTranscriptWebhookHandler
 index.mjs -- imports utilities and manages the automation flow
 /utilities
-- analyzeTranscriptPromptTemplate.mjs -- use case specific prompt template
-- downloadURL.mjs -- use the download_url to retreive the transcript (VTT file) from zoom
-- getZoomSecret.mjs
+- analyzeTranscriptPromptTemplate.mjs -- prompt template - engineered for specific use case
+- downloadURL.mjs -- use the download_url + download_token to retreive the transcript (VTT file) from zoom
+- getZoomSecret.mjs - 
 - parseVTT.mjs
 - sendToOpenAI.mjs -- facilitates the langchain flow to send the prompt template to the specified language model
 - sendToSlack.mjs
