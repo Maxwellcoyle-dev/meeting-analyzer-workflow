@@ -4,6 +4,14 @@ This is a serverless application that can be deployed with the SAM CLI.
 
 The Project contains a lambda function that reveives events through an api gateway. Incoming events are sent via a Zoom webhook when a meeting recording transcript is successfully generated for the specified Zoom account. The incoming payload contains information about that specific recording, including a download url where the transcript can be retreived from. The lambda function takes in this event, parses and formats the transcript, uses langchain npm package to pair the transcript with a prompt template and then sends it to the specified language model. Finally, the lambda function sends the ai response to the user in a slack channel. 
 
+Requirements: 
+- Zoom business account - cloud recording transcriptions enabled
+- Zoom account permissions to create a webhook and listen for recording transcript events
+- Slack workspace + a slack app with webhooks enabled
+- API access key for your chosen ai language model
+- AWS User with permission to create and view lambdas, api gateway, dynamodb table, secret manager
+
+
 The code lives here --> functions/zoomTranscriptWebhookHandler
 
 index.mjs -- imports utilities and manages the automation flown
