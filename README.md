@@ -7,7 +7,7 @@ The Project contains a lambda function that reveives events through an api gatew
 Requirements: 
 - Zoom business account - cloud recording transcriptions enabled
 - Zoom account permissions to create a webhook to listen for recording transcript events
-- Slack workspace + a slack app with webhooks enabled + permission to post in a specific channel
+- Slack workspace + a slack app with webhooks enabled + bot permission to post in a specific channel
 - API access key for your chosen ai language model
 - AWS User with permission to create and view lambdas, api gateway, dynamodb table, secret manager
 
