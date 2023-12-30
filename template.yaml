@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 120
 
 Resources:
   ZoomTranscriptWebhookFunction:
@@ -25,6 +25,26 @@ Resources:
           Properties:
             Path: /zoom-transcript-webhook
             Method: post
+      Environment: # Pass the DynamoDB table name as an environment variable
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref ZoomTranscriptEventDebounceTable
+      Policies: # IAM policies to allow the Lambda function to access DynamoDB
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ZoomTranscriptEventDebounceTable
+
+  ZoomTranscriptEventDebounceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ZoomTranscriptEventDebounceTable
+      AttributeDefinitions:
+        - AttributeName: eventId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: eventId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
 Outputs:
   ZoomTranscriptWebhookApi:
@@ -36,3 +56,6 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: Implicit IAM Role created for web hook function
     Value: !GetAtt ZoomTranscriptWebhookFunctionRole.Arn
+  ZoomTranscriptEventDebounceTableArn:
+    Description: ARN of the DynamoDB Table
+    Value: !GetAtt ZoomTranscriptEventDebounceTable.Arn

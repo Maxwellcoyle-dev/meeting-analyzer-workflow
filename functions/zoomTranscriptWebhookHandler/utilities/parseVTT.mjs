@@ -1,4 +1,6 @@
 const parseVTT = (vttContent) => {
+  console.log("Parsing VTT START");
+  console.log("vttContent type", typeof vttContent);
   if (!vttContent.startsWith("WEBVTT")) {
     throw new Error("Invalid VTT file");
   }

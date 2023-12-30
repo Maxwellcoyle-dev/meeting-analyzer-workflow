@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const sendToSlack = async (message, topic) => {
   const slackWebhookUrl =
-    "https://hooks.slack.com/services/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";
+    "https://hooks.slack.com/services/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";
 
   try {
     const response = await axios.post(

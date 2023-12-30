@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.449.0",
     "@aws-sdk/client-secrets-manager": "^3.445.0",
     "axios": "^1.6.1",
     "crypto": "^1.0.1",

@@ -16,8 +16,10 @@ Review the call in order to provide me with the following details:
 Here is the call transcript:
 {transcript}
 
-
-Please be as thorough as possible. If you don't know something, do not make it up. Just let me know that you don't know or that somethig is unclear to you.
+Final Instructions:
+- Please be as thorough as possible. 
+- If you don't know something, do not make it up. Just let me know that you don't know or that somethig is unclear to you.
+- craft your response in mrkdwn format.
 
 Assistant Response: 
 `;

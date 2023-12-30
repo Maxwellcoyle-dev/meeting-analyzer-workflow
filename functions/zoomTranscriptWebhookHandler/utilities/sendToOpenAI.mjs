@@ -2,19 +2,19 @@ import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
 import { LLMChain } from "langchain/chains";
 
-// import { getZoomSecret } from "./getZoomSecret.mjs";
+import { getSecret } from "./getSecret.mjs";
 
 import { analyzeTranscriptPromptTemplate } from "./analyzeTranscriptPromptTemplate.mjs";
 
-const openaiSecretname = "meeting-analyzer/openai-key";
+const openaiSecretname = "dev/meeting-analyzer/openai-key";
 
 export const analyzerChain = async (transcript) => {
   try {
-    // const openaiApiKeyResponse = await getZoomSecret(openaiSecretname);
-    // const openAIApiKey = openaiApiKeyResponse.OPENAI_API_KEY;
+    const openaiApiKeyResponse = await getSecret(openaiSecretname);
+    const openAIApiKey = openaiApiKeyResponse.OPENAI_API_KEY;
 
     const llmOpenAI = new OpenAI({
-      openAIApiKey: "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",
+      openAIApiKey: openAIApiKey,
       modelName: "gpt-4-1106-preview",
       temperature: 0,
     });

@@ -1,6 +1,7 @@
 import crypto from "crypto";
 
-import { getZoomSecret } from "./utilities/getZoomSecret.mjs";
+import { duplicateEventCheck } from "./utilities/debounceCheck.mjs";
+import { getSecret } from "./utilities/getSecret.mjs";
 import { downloadURL } from "./utilities/downloadURL.mjs";
 import { transformVTT } from "./utilities/parseVTT.mjs";
 import { analyzerChain } from "./utilities/sendToOpenAI.mjs";
@@ -15,7 +16,7 @@ export const handler = async (event) => {
   const body = JSON.parse(event.body);
   console.log("body", body);
 
-  const webhookTokenResponse = await getZoomSecret(zoomWebhookSecretName);
+  const webhookTokenResponse = await getSecret(zoomWebhookSecretName);
   const webhookToken = webhookTokenResponse.ZOOM_WEBHOOK_SECRET_TOKEN;
 
   if (body.event === "endpoint.url_validation") {
@@ -39,41 +40,57 @@ export const handler = async (event) => {
   }
 
   if (body.event === "recording.transcript_completed") {
-    const files = body.payload.object.recording_files;
-    console.log("files", files);
+    try {
+      const isDuplicate = await duplicateEventCheck(body.payload.object.uuid);
+      if (isDuplicate) {
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: "Duplicate event detected, ignoring",
+          }),
+        };
+      }
 
-    const downloadToken = body.download_token;
-    console.log("downloadToken", downloadToken);
+      // get the recording transcript file array
+      const files = body.payload.object.recording_files;
 
-    const transcriptFile = await downloadURL(files, downloadToken);
+      // get the download token - used as access_token in the download url
+      const downloadToken = body.download_token;
 
-    if (!transcriptFile) {
+      // Send files array + download token to downloadURL function
+      // + get the text from the transcript
+      const transcriptFile = await downloadURL(files, downloadToken);
+
+      // If there is no transcript return 404
+      if (!transcriptFile) {
+        return {
+          statusCode: 404,
+          body: JSON.stringify({
+            message: "Transcript file not found",
+          }),
+        };
+      }
+
+      // parse the VTT transcript file content to prep for OpenAI prompt
+      const parsedTranscript = transformVTT(transcriptFile);
+      console.log("parsedTranscript", parsedTranscript);
+
+      // send the parsed transcript to OpenAI analyzer chain
+      const openAIResult = await analyzerChain(parsedTranscript);
+      console.log("result", openAIResult);
+
+      // send the result of the openAI prompt + the meeting topic to a Slack Channel
+      await sendToSlack(openAIResult.text, body.payload.object.topic);
+
       return {
-        statusCode: 404,
+        statusCode: 200,
         body: JSON.stringify({
-          message: "Transcript file not found",
+          message: "Transcript processed successfully",
         }),
       };
-    }
-
-    const parsedTranscript = transformVTT(transcriptFile);
-    console.log("parsedTranscript", parsedTranscript);
-
-    const openAIResult = await analyzerChain(parsedTranscript);
-    console.log("result", openAIResult);
-
-    try {
-      await sendToSlack(openAIResult.text, body.payload.object.topic);
     } catch (error) {
       console.log(error);
-      throw new Error(error);
+      throw error;
     }
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Transcript processed successfully",
-      }),
-    };
   }
 };
